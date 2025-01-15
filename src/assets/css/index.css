@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root{
+    background-color: blue;
+} */
+
+.root {
+    background-color: blue; /* Replace with the appropriate color variable or hex */
+    height: 207px;
+    border-bottom-left-radius: 16px; /* For rounded bottom corners */
+    border-bottom-right-radius: 16px;
+    padding: 32px 16px; /* Corresponds to py-8 px-4 */
+    position: relative; /* Required for positioning the arrow */
+  }
+  
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Required for positioning children */
+  }
+  
+  .logo {
+    /* Add any specific logo styles here if needed */
+  }
+  
+  .arrow-icon {
+    position: absolute;
+    right: 16px; /* Adjust as needed for alignment */
+  }
