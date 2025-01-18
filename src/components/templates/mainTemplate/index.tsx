@@ -1,6 +1,7 @@
 import { ArrowRight2 } from "iconsax-react";
 import logo from "../../../assets/images/Group 48095662.svg";
 import { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
   children?: ReactNode;
@@ -9,21 +10,21 @@ interface IProps {
 const MainTemplate = (props: IProps) => {
   const { children } = props;
 
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col h-screen">
-      {/* Top Section */}
-      <div className="bg-primaries-100 rounded-b-2xl flex justify-center items-center h-52">
-        <h1 className="text-white text-2xl font-bold">Top Section</h1>
+      <div className="bg-primaries-100 rounded-b-2xl items-center pt-8 flex flex-col h-52">
+        <ArrowRight2 size={24} className="absolute text-white right-4" onClick={() => navigate(-1)}/>
+        <img src={logo} alt="" className="w-[90px]" />
       </div>
 
-      {/* Bottom Section */}
-      <div className=" flex justify-center items-center h-full">
-        <h1 className="text-white text-2xl font-bold">Bottom Section</h1>
-      </div>
+      <div className=" flex justify-center items-center h-full"></div>
 
-      {/* Center White Component */}
-      <div className="absolute inset-0 flex justify-center shadow-custom-shadow top-24 mx-6 h-[280px]">
-        {children}
+      <div className="absolute inset-0 flex justify-center shadow-custom-shadow top-24 mx-6 h-fit">
+        <div className="bg-white shadow-custom-shadow rounded-lg px-4 py-6 w-full">
+          {children}
+        </div>
       </div>
     </div>
   );

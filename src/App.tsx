@@ -1,19 +1,25 @@
 import "./assets/css/index.css";
 import MainTemplate from "./components/templates/mainTemplate";
+import "antd/dist/reset.css";
+import { Route, Routes } from "react-router-dom";
+import LoginPage from "./pages/loginPage";
+import OtpPage from "./pages/otpPage";
+import UserInfo from "./pages/userInfo";
+import InsurancePage from "./pages/insurancePage";
 
 function App() {
   return (
     <div className="">
       <MainTemplate
         children={
-          <div className="bg-white shadow-custom-shadow rounded-lg p-6">
-            <h2 className="text-center text-gray-800 text-xl font-semibold">
-              Centered Component
-            </h2>
-            <p className="text-center text-gray-600 mt-2">
-              This is a white component centered on the screen.
-            </p>
-          </div>
+          <>
+            <Routes>
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/otpPage" element={<OtpPage />} />
+              <Route path="/userInfo" element={<UserInfo />} />
+              <Route path="/insurancePage" element={<InsurancePage />} />
+            </Routes>
+          </>
         }
       />
     </div>

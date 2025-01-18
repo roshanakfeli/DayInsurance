@@ -3,7 +3,7 @@ import { useDebounce } from "../../../hook/debounce";
 
 export type IInputProps = {
   refInput?: React.LegacyRef<HTMLInputElement>;
-  type?: "number" | "text" | "radio";
+  type?: "number" | "text" | "radio" | "tel";
   placeholder?: string;
   value?: string;
   readOnly?: boolean;
