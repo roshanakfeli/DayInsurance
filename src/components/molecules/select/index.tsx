@@ -28,13 +28,13 @@ interface IProps<T, S, G> {
     input?: string;
   };
   icons?: React.ReactNode;
-  rendersGroup?: (item: G, index?: number) => React.ReactNode ;
+  rendersGroup?: (item: G, index?: number) => React.ReactNode;
   renders?: (
     item: T,
     index?: number,
     category?: G,
     value?: string
-  ) => React.ReactNode ;
+  ) => React.ReactNode;
   type?: "single" | "multi";
   onClickTextField?: () => void;
   onFocus?: () => void;
@@ -99,12 +99,6 @@ export const Select = <T, S, G extends { items: any[]; key?: string }>(
     }
   };
 
-  // const openPin = () => {
-  //   if (status !== "close") {
-  //     setStatus("close");
-  //   } else setStatus("pin");
-  // };
-
   const onClickOnIcon = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     onClickOnRightIcon(inputRef?.current?.value ?? "");
@@ -144,13 +138,14 @@ export const Select = <T, S, G extends { items: any[]; key?: string }>(
             <Loading className="w-6" />
           ) : (
             <>
-              { (
+              {(data.length > 0 || groups.length > 0) && (
                 <ArrowDown2
                   onClick={() =>
                     setStatus((prev) => (prev === "close" ? "open" : "close"))
                   }
-                  className="w-6 text-basicGray-100cb"
+                  className="text-basicGray-100cb"
                   fill="grey"
+                  size={20}
                 ></ArrowDown2>
               )}
             </>

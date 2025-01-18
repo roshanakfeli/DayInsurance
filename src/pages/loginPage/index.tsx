@@ -1,11 +1,10 @@
 import { Typography } from "../../components/atoms/typography";
 import { Divider } from "antd";
-import { Button } from "../../components/molecules/button";
 import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useContext } from "react";
 import { userContext } from "../../context/userContext";
-
+import { Button } from "../../components/atoms/button";
 interface IFormInput {
   phoneNumber: string;
 }
@@ -18,7 +17,6 @@ const LoginPage = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm();
 
@@ -57,8 +55,7 @@ const LoginPage = () => {
             <input
               type="tel"
               value={phoneNumber}
-              className="hover:border-none focus:border-none text-left placeholder:text-basicGray-100 text-basicGray-400 w-full"
-              //   placeholder="XXX  XXX-XXX"
+              className="border-none focus:border-none text-left w-full"
               {...register("phoneNumber", {
                 required: "شماره همراه الزامی است.",
                 minLength: {
@@ -71,9 +68,9 @@ const LoginPage = () => {
                 },
               })}
               maxLength={10}
-              onChange={(e) =>
-                dispatch({ type: "SET-PHONE-NUMBER", payload: e.target.value })
-              }
+              onChange={(e) => {
+                dispatch({ type: "SET-PHONE-NUMBER", payload: e.target.value });
+              }}
               placeholder="XXX - XXX - XXX"
             />
             <div className="flex items-center">
@@ -84,13 +81,9 @@ const LoginPage = () => {
               <Typography className="text-basicGray-100 m-0 ">98+</Typography>
             </div>
           </div>
-          {errors.phoneNumber && (
-            <Typography
-              className="text-rose-600"
-              type="h4"
-              style={{ color: "red" }}
-            >
-              {errors.phoneNumber.message}
+          {errors.phoneNumber?.message && (
+            <Typography className="text-rose-600" type="h4">
+              {errors.phoneNumber.message as React.ReactNode}
             </Typography>
           )}
         </div>
@@ -98,7 +91,6 @@ const LoginPage = () => {
           <Button
             type="submit"
             className="bg-primaries-100 rounded-lg w-full py-[10px]"
-            // onClick={() => navigate("/otpPage")}
           >
             <Typography className="font-normal m-0" type="h2">
               ادامه

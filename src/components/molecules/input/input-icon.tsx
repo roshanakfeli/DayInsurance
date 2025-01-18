@@ -14,7 +14,6 @@ export const InputIcon = (props: IProps) => {
   return (
     <div className="relative w-full">
       <Input refInput={refInput} {...props} />
-      {/* {isLoading ? <Loading /> : } */}
       <span className="h-full w-12 absolute top-[1px] right-0 flex justify-center items-center pointer-events-none">
         <span>{isLoading ? <Loading /> : icon}</span>
       </span>

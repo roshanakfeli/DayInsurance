@@ -1,7 +1,5 @@
-import React, { useContext } from "react";
+import { useContext, useState } from "react";
 import { Typography } from "../../components/atoms/typography";
-import { Input } from "../../components/atoms/input";
-import { Button } from "../../components/molecules/button";
 import {
   InputOTP,
   InputOTPGroup,
@@ -14,11 +12,30 @@ import { Edit2 } from "iconsax-react";
 import { useNavigate } from "react-router-dom";
 import { notification } from "antd";
 import { BiError } from "react-icons/bi";
+import { Button } from "../../components/atoms/button";
+
+const notAllowedValues = new Set([
+  "11111",
+  "22222",
+  "33333",
+  "44444",
+  "55555",
+  "66666",
+  "77777",
+  "88888",
+  "99999",
+]);
 
 const OtpPage = () => {
   const navigate = useNavigate();
 
   const { phoneNumber } = useContext(userContext);
+
+  const [otpValue, setOtpValue] = useState<string>("");
+
+  const isNotAllowedValue = (value: string) => {
+    return notAllowedValues.has(value);
+  };
 
   return (
     <div>
@@ -40,12 +57,11 @@ const OtpPage = () => {
           </Typography>
         </div>
       </div>
-      {/* <div className=""> */}
       <InputOTP
         maxLength={5}
         pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
         className="flex justify-center"
-        onChange={(vss) => console.log(vss)}
+        onChange={(value) => setOtpValue(value)}
       >
         <InputOTPGroup
           className="flex items-center justify-between mt-[22px] w-full"
@@ -73,31 +89,32 @@ const OtpPage = () => {
           />
         </InputOTPGroup>
       </InputOTP>
-      {/* </div> */}
       <div className="flex justify-center my-4">
         <Timer totalSeconds={120} className="text-basicGray-200" />
       </div>
-      <div className="">
+      <div>
         <Button
           className="bg-primaries-100 rounded-lg w-full py-[10px]"
           onClick={() => {
-            notification.open({
-              message: (
-                <Typography className="text-basicGray-400 font-medium text-xs rounded-2xl m-0 pt-1">
-                  کد وارد شده صحیح نمی باشد.
-                </Typography>
-              ),
-              type: "error",
-              className: "bg-error-100 rounded-2xl border-2 border-error-500",
-              icon: (
-                <div className="bg-error-500 rounded-md p-1">
-                  <BiError className=" text-white " size={20} />
-                </div>
-              ),
-              closeIcon: false,
-            });
-
-            navigate("/userInfo")
+            if (isNotAllowedValue(otpValue)) {
+              notification.open({
+                message: (
+                  <Typography className="text-basicGray-400 font-medium text-xs rounded-2xl m-0 pt-1">
+                    کد وارد شده صحیح نمی باشد.
+                  </Typography>
+                ),
+                type: "error",
+                className: "bg-error-100 rounded-2xl border-2 border-error-500",
+                icon: (
+                  <div className="bg-error-500 rounded-md p-1">
+                    <BiError className=" text-white " size={20} />
+                  </div>
+                ),
+                closeIcon: false,
+              });
+            } else {
+              navigate("/userInfo");
+            }
           }}
         >
           <Typography className="font-normal m-0" type="h2">

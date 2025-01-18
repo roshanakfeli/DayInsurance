@@ -1,10 +1,9 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { Typography } from "../../components/atoms/typography";
-import { Divider } from "antd";
-import { Button } from "../../components/molecules/button";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { userContext } from "../../context/userContext";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../../components/atoms/button";
 
 interface IFormInput {
   firstName: string;
@@ -19,7 +18,6 @@ const UserInfo = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm();
 
@@ -57,13 +55,9 @@ const UserInfo = () => {
               }}
             />
           </div>
-          {errors.phoneNumber && (
-            <Typography
-              className="text-rose-600"
-              type="h4"
-              style={{ color: "red" }}
-            >
-              {errors.firstName.message}
+          {errors.firstName && (
+            <Typography className="text-rose-600" type="h4">
+              {errors.firstName.message as React.ReactNode}
             </Typography>
           )}
         </div>
@@ -93,13 +87,9 @@ const UserInfo = () => {
               }
             />
           </div>
-          {errors.phoneNumber && (
-            <Typography
-              className="text-rose-600"
-              type="h4"
-              style={{ color: "red" }}
-            >
-              {errors.lastName.message}
+          {errors.lastName && (
+            <Typography className="text-rose-600" type="h4">
+              {errors.lastName.message as React.ReactNode}
             </Typography>
           )}
         </div>
@@ -108,7 +98,6 @@ const UserInfo = () => {
           <Button
             type="submit"
             className="bg-primaries-100 rounded-lg w-full py-[10px]"
-            // onClick={() => navigate("/otpPage")}
           >
             <Typography className="font-normal m-0" type="h2">
               ادامه

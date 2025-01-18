@@ -1,19 +1,19 @@
-import React from 'react';
-import { Loading } from '../../atoms/loading';
+import React from "react";
+import { Loading } from "../../atoms/loading";
 
 export interface IButtonprops {
-  variant?: 'primary' | 'outline' | 'none';
+  variant?: "primary" | "outline" | "none";
   className?: string;
   children: React.ReactNode;
   isLoading?: boolean;
   disabled?: boolean;
   onClick?: (e?: React.MouseEvent<HTMLElement>) => void;
-  type?: 'button' | 'submit' | 'reset';
-  size?: 'small' | 'default' | 'big';
-  rounded?: 'small' | 'default' | 'big';
+  type?: "button" | "submit" | "reset";
+  size?: "small" | "default" | "big";
+  rounded?: "small" | "default" | "big";
   icon?: React.ReactNode;
   minWidth?: boolean;
-  color?: 'error' | 'warning' | 'info' | 'success' | 'secondary';
+  color?: "error" | "warning" | "info" | "success" | "secondary";
 }
 
 export const Button = (props: IButtonprops) => {
@@ -30,61 +30,60 @@ export const Button = (props: IButtonprops) => {
     color,
     rounded,
   } = props;
-  let { className = '' } = props;
+  let { className = "" } = props;
 
-  let loadingColor: 'white' | 'black' | 'primary' = 'white';
+  let loadingColor: "white" | "black" | "primary" = "white";
   switch (variant) {
-    case 'outline':
-      className +=
-        ' hover:bg-white-dark th-primary-color th-text-color border th-primary-border-color rounded-md';
-      loadingColor = 'primary';
+    case "outline":
+      className += "text-primaries-100 border border-primaries-100 rounded-md";
+      loadingColor = "primary";
       break;
-    case 'none':
+    case "none":
       break;
     default:
-      className += ' th-primary-bg-color text-white border rounded-md';
+      className += " bg-primaries-100 text-white border rounded-md";
       break;
   }
 
   switch (size) {
-    case 'small':
-      className += 'w-[60px] ';
+    case "small":
+      className += "w-[60px] ";
       break;
-    case 'big':
-      className += ' w-[150px]';
+    case "big":
+      className += " w-[150px]";
       break;
-    case 'default':
-      className += 'w-[100px]';
+    case "default":
+      className += "w-[100px]";
       break;
   }
 
   switch (rounded) {
-    case 'small':
-      className += 'w-[40px] h-[35px] rounded-full ';
+    case "small":
+      className += "w-[40px] h-[35px] rounded-full ";
       break;
-    case 'big':
-      className += ' w-[60px] h-[60px] rounded-full ';
+    case "big":
+      className += " w-[60px] h-[60px] rounded-full ";
       break;
-    case 'default':
-      className += 'w-[50px] h-[50px] rounded-full ';
+    case "default":
+      className += "w-[50px] h-[50px] rounded-full ";
       break;
   }
 
   switch (color) {
-    case 'error':
-      className += 'bg-red-500 ';
+    case "error":
+      className += " bg-red-500 ";
       break;
-    case 'warning':
-      className += ' bg-[#f0ad4e] ';
+    case "warning":
+      className += " bg-[#f0ad4e] ";
       break;
-    case 'info':
-      className += ' bg-[#5bc0de]';
+    case "info":
+      className += " bg-[#5bc0de]";
       break;
-    case 'success':
-      className += ' bg-[#5cb85c] ';
+    case "success":
+      className += " bg-[#5cb85c] ";
       break;
-    case 'secondary':
-      className += ' bg-[#d1d5db] ';
+    case "secondary":
+      className += " bg-[#d1d5db] ";
       break;
   }
 
@@ -92,16 +91,16 @@ export const Button = (props: IButtonprops) => {
     <button
       onClick={onClick}
       disabled={isLoading || disabled}
-      type={type ?? 'button'}
-      className={`z-20 ${minWidth && 'px-4'} md: py-2  ${minWidth && 'px-8'} ${
-        minWidth && 'min-w-[60px]'
+      type={type ?? "button"}
+      className={`z-20 ${minWidth && "px-4"} md: py-2  ${minWidth && "px-8"} ${
+        minWidth && "min-w-[60px]"
       } md:${
-        minWidth && 'min-w-[100px]'
+        minWidth && "min-w-[100px]"
       }  flex items-center justify-center relative transition-color ease-in-out duration-300  ${
-        minWidth && 'text-[14px]'
-      } md:${minWidth && 'text-[16px]'} ${
-        isLoading || disabled ? 'cursor-not-allowed' : ''
-      }${className ?? ''}`}
+        minWidth && "text-[14px]"
+      } md:${minWidth && "text-[16px]"} ${
+        isLoading || disabled ? "cursor-not-allowed" : ""
+      }${className ?? ""}`}
     >
       <span> {icon} </span>
       {children}

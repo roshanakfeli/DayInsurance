@@ -15,7 +15,6 @@ export const InputAnimatedPlaceHolder = (props: IInputAnimatedProps) => {
     className,
     id,
   } = props;
-  // const active = false;
 
   return (
     <>

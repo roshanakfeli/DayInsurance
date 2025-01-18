@@ -29,7 +29,6 @@ const Radio = (props: IProps) => {
         <div className="w-full">
           <Typography className="text-base text-basicGray-500">
             {label1}
-            {/* شریک کاری */}
           </Typography>
         </div>
       </div>
@@ -47,7 +46,6 @@ const Radio = (props: IProps) => {
         </div>
         <div className="w-full">
           <Typography className="text-base text-basicGray-500">
-            {/* همکار */}
             {label2}
           </Typography>
         </div>
