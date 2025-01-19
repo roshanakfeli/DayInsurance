@@ -1,10 +1,12 @@
 import { Typography } from "../../components/atoms/typography";
-import { Divider } from "antd";
+import { Divider, notification } from "antd";
 import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useContext } from "react";
 import { userContext } from "../../context/userContext";
 import { Button } from "../../components/atoms/button";
+import { useMutation } from "react-query";
+import { createOtp } from "../../services/createOtp";
 interface IFormInput {
   phoneNumber: string;
 }
@@ -20,9 +22,36 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm();
 
+  const createOtpMutation = useMutation(createOtp, {
+    onSuccess: (data) => {
+      navigate("/otpPage");
+    },
+    onError: (error:{code:string;message:string}) => {
+      notification.open({
+        type:"error",
+        message: (
+          <Typography className="text-basicGray-400 font-medium text-xs m-0 pt-1">
+            {error.message}
+          </Typography>
+        ),
+        className: "bg-error-100",
+        // icon: (
+        //   <div className="bg-error-500 rounded-md p-1">
+        //     <BiError className=" text-white " size={20} />
+        //   </div>
+        // ),
+      });
+    },
+    
+  });
+
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    const requestData = {
+      phone_number: `0${data.phoneNumber}`,
+    };
+
+    createOtpMutation.mutate(requestData);
     dispatch({ type: "SET-PHONE-NUMBER", payload: data.phoneNumber });
-    navigate("/otpPage");
   };
 
   return (
@@ -90,10 +119,15 @@ const LoginPage = () => {
         <div className="mt-7">
           <Button
             type="submit"
-            className="bg-primaries-100 rounded-lg w-full py-[10px]"
+            className={` rounded-lg w-full py-[10px] ${
+              createOtpMutation.isLoading
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-primaries-100'
+            }`}
           >
             <Typography className="font-normal m-0" type="h2">
-              ادامه
+            {createOtpMutation.isLoading ? 'لطفا منتظر بمانید...' : 'ادامه'}
+              
             </Typography>
           </Button>
         </div>

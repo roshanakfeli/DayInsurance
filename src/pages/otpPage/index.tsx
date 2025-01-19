@@ -13,18 +13,20 @@ import { useNavigate } from "react-router-dom";
 import { notification } from "antd";
 import { BiError } from "react-icons/bi";
 import { Button } from "../../components/atoms/button";
+import { useMutation } from "react-query";
+import { createOtp } from "../../services/createOtp";
+import { validateOtp } from "../../services/validateOtp";
 
-const notAllowedValues = new Set([
-  "11111",
-  "22222",
-  "33333",
-  "44444",
-  "55555",
-  "66666",
-  "77777",
-  "88888",
-  "99999",
-]);
+// const notAllowedValues = new Set([
+//   "11111",
+//   "22222",
+//   "33333",
+//   "44444",
+//   "66666",
+//   "77777",
+//   "88888",
+//   "99999",
+// ]);
 
 const OtpPage = () => {
   const navigate = useNavigate();
@@ -33,9 +35,62 @@ const OtpPage = () => {
 
   const [otpValue, setOtpValue] = useState<string>("");
 
-  const isNotAllowedValue = (value: string) => {
-    return notAllowedValues.has(value);
+  const createOtpMutation = useMutation(createOtp, {
+    onSuccess: (data) => {
+      navigate("/otpPage");
+    },
+    onError: (error: { code: string; message: string }) => {
+      notification.open({
+        type: "error",
+        message: (
+          <Typography className="text-basicGray-400 font-medium text-xs m-0 pt-1">
+            {error.message}
+          </Typography>
+        ),
+        className: "bg-error-100",
+      });
+    },
+  });
+
+  const validateOtpMutation = useMutation(validateOtp, {
+    onSuccess: (data) => {
+      navigate("/userInfo");
+    },
+    onError: (error: { code: string; message: string }) => {
+      notification.open({
+        message: (
+          <Typography className="text-basicGray-400 font-medium text-xs rounded-2xl m-0 pt-1">
+            {error.message}
+          </Typography>
+        ),
+        type: "error",
+        className: "bg-error-100",
+        icon: (
+          <div className="bg-error-500 rounded-md p-1">
+            <BiError className=" text-white " size={20} />
+          </div>
+        ),
+        closeIcon: false,
+      });
+    },
+  });
+
+  const onValidateOtpHandler = () => {
+    const requestData = {
+      code: Number(otpValue),
+      phone_number:`0${phoneNumber}`
+    };
+
+    validateOtpMutation.mutate(requestData);
   };
+
+  const onResendOtpHandler = () => {
+    const requestData = {
+      phone_number: `0${phoneNumber}`,
+    };
+
+    createOtpMutation.mutate(requestData);
+  }
 
   return (
     <div>
@@ -90,35 +145,19 @@ const OtpPage = () => {
         </InputOTPGroup>
       </InputOTP>
       <div className="flex justify-center my-4">
-        <Timer totalSeconds={120} className="text-basicGray-200" />
+        <Timer totalSeconds={120} className="text-basicGray-200" onClick={onResendOtpHandler} />
       </div>
       <div>
         <Button
-          className="bg-primaries-100 rounded-lg w-full py-[10px]"
-          onClick={() => {
-            if (isNotAllowedValue(otpValue)) {
-              notification.open({
-                message: (
-                  <Typography className="text-basicGray-400 font-medium text-xs rounded-2xl m-0 pt-1">
-                    کد وارد شده صحیح نمی باشد.
-                  </Typography>
-                ),
-                type: "error",
-                className: "bg-error-100 rounded-2xl border-2 border-error-500",
-                icon: (
-                  <div className="bg-error-500 rounded-md p-1">
-                    <BiError className=" text-white " size={20} />
-                  </div>
-                ),
-                closeIcon: false,
-              });
-            } else {
-              navigate("/userInfo");
-            }
-          }}
+          className={` rounded-lg w-full py-[10px] ${
+            validateOtpMutation.isLoading
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-primaries-100'
+          }`}
+          onClick={onValidateOtpHandler}
         >
           <Typography className="font-normal m-0" type="h2">
-            ادامه
+          {validateOtpMutation.isLoading ? 'لطفا منتظر بمانید...' : 'ادامه'}
           </Typography>
         </Button>
       </div>
