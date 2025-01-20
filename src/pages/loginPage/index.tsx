@@ -23,33 +23,26 @@ const LoginPage = () => {
   } = useForm();
 
   const createOtpMutation = useMutation(createOtp, {
-    onSuccess: (data) => {
+    onSuccess: () => {
       navigate("/otpPage");
     },
-    onError: (error:{code:string;message:string}) => {
+    onError: (error: { code: string; message: string }) => {
       notification.open({
-        type:"error",
+        type: "error",
         message: (
           <Typography className="text-basicGray-400 font-medium text-xs m-0 pt-1">
             {error.message}
           </Typography>
         ),
         className: "bg-error-100",
-        // icon: (
-        //   <div className="bg-error-500 rounded-md p-1">
-        //     <BiError className=" text-white " size={20} />
-        //   </div>
-        // ),
       });
     },
-    
   });
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    const requestData = {
-      phone_number: `0${data.phoneNumber}`,
-    };
-
+    const requestData ={
+      phone_number:`0${data.phoneNumber}`
+    }
     createOtpMutation.mutate(requestData);
     dispatch({ type: "SET-PHONE-NUMBER", payload: data.phoneNumber });
   };
@@ -121,13 +114,12 @@ const LoginPage = () => {
             type="submit"
             className={` rounded-lg w-full py-[10px] ${
               createOtpMutation.isLoading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-primaries-100'
-            }`}
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-primaries-100"
+            } `}
           >
             <Typography className="font-normal m-0" type="h2">
-            {createOtpMutation.isLoading ? 'لطفا منتظر بمانید...' : 'ادامه'}
-              
+              {createOtpMutation.isLoading ? "لطفا منتظر بمانید..." : "ادامه"}
             </Typography>
           </Button>
         </div>

@@ -23,12 +23,11 @@ export const fetchInsuranceBranch = async (
     const response = await axios.get<FetchInsuranceBranchResponseModel>(
       `https://stage.api.sanaap.co/api/v2/app/selection_item/insurance_branch/wop_list/`,
       {
-        params: { name, insurance, province }, // Add the `province` as a query parameter
+        params: { name, insurance, province },
       }
     );
     return response.data;
   } catch (error) {
-    // Handle error appropriately
     throw new Error(
       `Error fetching insurance branch: ${
         axios.isAxiosError(error) ? error.message : "Unknown error"

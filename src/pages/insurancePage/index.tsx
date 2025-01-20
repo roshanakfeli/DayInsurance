@@ -14,14 +14,12 @@ import { CloseCircle, TickCircle } from "iconsax-react";
 import {
   fetchCounties,
   fetchProvinces,
-  FetchProvincesResponse,
+  FetchProvincesResponseModel,
 } from "../../services/fetchProvinces";
-import {
-  fetchInsuranceBranch,
-  FetchInsuranceBranchResponseModel,
-} from "../../services/insuranceBranch";
+import { fetchInsuranceBranch } from "../../services/insuranceBranch";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useSignupAgent } from "../../services/verificationSignup";
 
 interface IFormInput {
   firstName: string;
@@ -29,7 +27,12 @@ interface IFormInput {
 }
 
 const InsurancePage = () => {
-  const { agentCode, dispatch } = useContext(userContext);
+  const { agentCode, phoneNumber, firstName, lastName, dispatch } =
+    useContext(userContext);
+
+  const { handleSubmit } = useForm();
+
+  const { mutate: verificationsignupMutation } = useSignupAgent();
 
   const [selectedProvince, setselectedProvince] = useState<{
     name: string;
@@ -45,6 +48,15 @@ const InsurancePage = () => {
   }>();
 
   const [branchValue, setBranchValue] = useState("");
+  const [cityCode, setCityCode] = useState("021");
+  const [phone, setPhone] = useState("");
+  const [nameOfAgency, setNameOfAgency] = useState("فثسف");
+  const [cityValue, seCityValue] = useState<{
+    name: string;
+    id: number;
+  }>();
+  const [typeOfRepresentation, setTypeOfRepresentation] =
+    useState<string>("real");
 
   const { data: provincesData, isLoading: loadingProvinces } = useQuery(
     ["provinces"],
@@ -69,36 +81,26 @@ const InsurancePage = () => {
       }
     );
 
-  const [cityValue, seCityValue] = useState<{
-    name: string;
-    id: number;
-  }>();
-  const [selectedValue, setSelectedValue] = useState<string>("");
-  // );
-
-  const { handleSubmit } = useForm();
-
   const onSubmit: SubmitHandler<IFormInput> = () => {
-    notification.open({
-      message: (
-        <Typography className="text-basicGray-400 font-medium text-xs rounded-2xl m-0 pt-1">
-          ثبت نام با موفقیت انجام شد.
-        </Typography>
-      ),
-      type: "success",
-      className: "bg-green-100 rounded-2xl border-2 border-green-500",
-      closeIcon: false,
-    });
-  };
+    const requestData = {
+      province: String(selectedProvince.id),
+      county: cityValue?.name ?? "",
+      agent_code: agentCode,
+      phone_number: phoneNumber,
+      insurance_branch: selectedInsuranceBranch?.name ?? "",
+      agency_type: typeOfRepresentation,
+      phone,
+      city_code: cityCode,
+      first_name: firstName,
+      last_name: lastName,
+      name: nameOfAgency,
+      address: "تهران",
+    };
 
-  const handleChange = (value: string) => {
-    setSelectedValue(value);
+    verificationsignupMutation(requestData);
   };
 
   const checkAgencyCodeMutation = useMutation(checkAgencyCode, {
-    onSuccess: (data) => {
-      // navigate("/otpPage");
-    },
     onError: (error: {
       code: string;
       message: string;
@@ -135,23 +137,7 @@ const InsurancePage = () => {
     };
   }, [agentCode]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (agentCode) {
-        const requestData = {
-          agent_code: agentCode,
-        };
-
-        checkAgencyCodeMutation.mutate(requestData);
-      } else return;
-    }, 1000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [agentCode]);
-
   const clearAgencycodeHandler = () => {
-    console.log("object");
     dispatch({ type: "SET-AGENT-CODE", payload: "" });
   };
 
@@ -180,11 +166,7 @@ const InsurancePage = () => {
                 checkAgencyCodeMutation.isLoading ? (
                   <Loading />
                 ) : checkAgencyCodeMutation.isSuccess ? (
-                  <TickCircle
-                    size={20}
-                    className="text-green-600"
-                    onClick={() => console.log("object")}
-                  />
+                  <TickCircle size={20} className="text-green-600" />
                 ) : (
                   checkAgencyCodeMutation.isError && (
                     <CloseCircle
@@ -216,7 +198,7 @@ const InsurancePage = () => {
                 className: "placeholder:!text-[#D2D1D1] placeholder:text-xs",
               }}
               placeholder={{ input: "استان را انتخاب کنید." }}
-              renders={(provinces: FetchProvincesResponse) => (
+              renders={(provinces: FetchProvincesResponseModel) => (
                 <Typography className="text-basicGray-200">
                   {provinces.name}
                 </Typography>
@@ -242,7 +224,7 @@ const InsurancePage = () => {
               value={cityValue?.name}
               inputProps={{
                 className: `placeholder:!text-[#D2D1D1] placeholder:text-xs ${
-                  selectedProvince.name ? "" : "bg-gray-200"
+                  selectedProvince.name ? "" : "!bg-gray-200"
                 }`,
               }}
               placeholder={{ input: "شهر را انتخاب کنید." }}
@@ -273,7 +255,7 @@ const InsurancePage = () => {
               value={branchValue}
               inputProps={{
                 className: `placeholder:!text-[#D2D1D1] placeholder:text-xs ${
-                  selectedProvince.name ? "" : "bg-gray-200"
+                  selectedProvince.name ? "" : "!bg-gray-200"
                 }`,
               }}
               renders={(branche: {
@@ -293,7 +275,7 @@ const InsurancePage = () => {
                 setBranchValue(branch.name);
                 setselectedInsuranceBranch(branch);
               }}
-              isLoading={loadingCities}
+              isLoading={loadingInsuranceBranchData}
               readOnly={selectedProvince.name ? false : true}
             />
           </div>
@@ -308,93 +290,87 @@ const InsurancePage = () => {
               تلفن ثابت
             </Typography>
           </label>
-          <div id="lastName" className="flex items-center gap-2 w-full">
+          <div
+            id="lastName"
+            className="grid grid-cols-5 items-center gap-2 w-full"
+          >
             <Input
-              className="w-11 !pr-3 flex justify-center placeholder:!text-[#D2D1D1] placeholder:text-xs text-[#D2D1D1]"
+              className="w-11 !pr-3 flex justify-center placeholder:!text-basicGray-100 placeholder:text-xs text-basicGray-400 col-span-4"
               placeholder="XXXX - XXXX"
+              onChangeText={(value) => setPhone(value)}
+              value={phone}
+              maxLength={8}
             />
             <Input
-              className="w-11 !pr-3 flex justify-center placeholder:!text-[#D2D1D1] placeholder:text-xs text-[#D2D1D1]"
-              readOnly
+              className="w-11 !pr-3 flex justify-center placeholder:!text-basicGray-100 placeholder:text-xs text-basicGray-400 text-center"
               placeholder="021"
+              value={cityCode}
+              onChangeText={(value) => setCityCode(value)}
+              maxLength={3}
             />
           </div>
         </div>
-        <div className="grid grid-cols-3 items-center ">
-          <Typography
-            className="font-normal text-xs text-basicGray-400"
-            type="h2"
+        <div>
+          <RadioGroup
+            defaultValue={typeOfRepresentation}
+            className="grid grid-cols-3 items-center "
+            dir="rtl"
+            onValueChange={(value) => setTypeOfRepresentation(value)}
           >
-            نوع نمایندگی
-          </Typography>
-          <RadioGroup defaultValue="option-one">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="option-one" id="option-one" />
-              <Label htmlFor="option-one">حقیقی</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="option-two" id="option-two" />
-              <Label htmlFor="option-two">حقوقی</Label>
-            </div>
-          </RadioGroup>
-
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="type"
-              value="حقوقی"
-              checked={selectedValue === "حقوقی"}
-              onChange={() => handleChange("حقوقی")}
-              className={
-                " w-5 h-5 rounded-full focus:outline-none cursor-pointer"
-              }
-            />
-            <Typography className="text-basicGray-400 !text-xs m-0">
-              حقیقی
-            </Typography>
-          </label>
-
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="type"
-              value="حقیقی"
-              checked={selectedValue === "حقیقی"}
-              onChange={() => handleChange("حقیقی")}
-              className=" w-5 h-5 rounded-full focus:outline-none cursor-pointer"
-            />
-            <Typography className="text-basicGray-400 !text-xs m-0">
-              حقوقی
-            </Typography>
-          </label>
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="agentCode">
             <Typography
               className="font-normal text-xs text-basicGray-400"
               type="h2"
             >
-              نام نمایندگی
+              نوع نمایندگی
             </Typography>
-          </label>
-          <div
-            id="agentCode"
-            className="flex items-center justify-between border p-3 border-basicGray-100 rounded-lg h-full"
-          >
-            <input
-              value={agentCode}
-              className="hover:border-none focus:border-none text-right placeholder:text-basicGray-100 placeholder:text-xs text-basicGray-400 w-full"
-              placeholder="نام نمایندگی را وارد کنید"
-            />
-          </div>
+            <div className="flex items-center space-x-2 justify-center gap-2">
+              <RadioGroupItem value="real" id="real" />
+              <Label htmlFor="real">
+                <Typography className="text-basicGray-400 font-normal">
+                  حقیقی
+                </Typography>
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2 justify-end gap-2">
+              <RadioGroupItem value="legal" id="legal" />
+              <Label htmlFor="legal">
+                <Typography className="text-basicGray-400 font-normal">
+                  حقوقی
+                </Typography>
+              </Label>
+            </div>
+          </RadioGroup>
         </div>
+        {typeOfRepresentation === "legal" ? (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="agentCode">
+              <Typography
+                className="font-normal text-xs text-basicGray-400"
+                type="h2"
+              >
+                نام نمایندگی
+              </Typography>
+            </label>
+            <div
+              id="agentCode"
+              className="flex items-center justify-between border border-basicGray-100 rounded-lg "
+            >
+              <Input
+                value={agentCode}
+                className="border-none text-right placeholder:text-basicGray-100 placeholder:text-xs text-basicGray-400 w-full"
+                placeholder="نام نمایندگی را وارد کنید"
+                onChangeText={(value) => setNameOfAgency(value)}
+              />
+            </div>
+          </div>
+        ) : null}
         <div className="mt-7">
           <Button
             type="submit"
             className="bg-primaries-100 rounded-lg w-full py-[10px]"
           >
             <Typography className="font-normal m-0" type="h2">
-              ادامه
+              ثبت نام
             </Typography>
           </Button>
         </div>

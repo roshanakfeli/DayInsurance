@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export type FetchProvincesResponse = {
+export type FetchProvincesResponseModel = {
   code: string;
   country: number;
   id: number;
@@ -15,14 +15,15 @@ export type FetchProvincesResponse = {
   };
 };
 
-export const fetchProvinces = async (): Promise<FetchProvincesResponse[]> => {
+export const fetchProvinces = async (): Promise<
+  FetchProvincesResponseModel[]
+> => {
   try {
-    const response = await axios.get<FetchProvincesResponse[]>(
+    const response = await axios.get<FetchProvincesResponseModel[]>(
       "https://stage.api.sanaap.co/base/provinces_wop/"
     );
     return response.data;
   } catch (error) {
-    // Optionally, handle the error (e.g., log or rethrow)
     throw new Error(
       `Error fetching provinces: ${
         axios.isAxiosError(error) ? error.message : "Unknown error"
@@ -33,17 +34,16 @@ export const fetchProvinces = async (): Promise<FetchProvincesResponse[]> => {
 
 export const fetchCounties = async (
   province: number
-): Promise<FetchProvincesResponse[]> => {
+): Promise<FetchProvincesResponseModel[]> => {
   try {
-    const response = await axios.get<FetchProvincesResponse[]>(
+    const response = await axios.get<FetchProvincesResponseModel[]>(
       `https://stage.api.sanaap.co/base/counties_wop/`,
       {
-        params: { province }, // Add the `province` as a query parameter
+        params: { province },
       }
     );
     return response.data;
   } catch (error) {
-    // Handle error appropriately
     throw new Error(
       `Error fetching counties: ${
         axios.isAxiosError(error) ? error.message : "Unknown error"

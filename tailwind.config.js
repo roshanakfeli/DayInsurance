@@ -11,6 +11,7 @@ export default {
         basicGray: {
           100: "#D2D1D1",
           200: "#909090",
+          300:"#B8B8B8",
           400: "#505050",
         },
         error: {

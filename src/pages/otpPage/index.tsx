@@ -17,17 +17,6 @@ import { useMutation } from "react-query";
 import { createOtp } from "../../services/createOtp";
 import { validateOtp } from "../../services/validateOtp";
 
-// const notAllowedValues = new Set([
-//   "11111",
-//   "22222",
-//   "33333",
-//   "44444",
-//   "66666",
-//   "77777",
-//   "88888",
-//   "99999",
-// ]);
-
 const OtpPage = () => {
   const navigate = useNavigate();
 
@@ -36,7 +25,7 @@ const OtpPage = () => {
   const [otpValue, setOtpValue] = useState<string>("");
 
   const createOtpMutation = useMutation(createOtp, {
-    onSuccess: (data) => {
+    onSuccess: () => {
       navigate("/otpPage");
     },
     onError: (error: { code: string; message: string }) => {
@@ -53,7 +42,7 @@ const OtpPage = () => {
   });
 
   const validateOtpMutation = useMutation(validateOtp, {
-    onSuccess: (data) => {
+    onSuccess: () => {
       navigate("/userInfo");
     },
     onError: (error: { code: string; message: string }) => {
@@ -85,11 +74,7 @@ const OtpPage = () => {
   };
 
   const onResendOtpHandler = () => {
-    const requestData = {
-      phone_number: `0${phoneNumber}`,
-    };
-
-    createOtpMutation.mutate(requestData);
+    createOtpMutation.mutate(`0${phoneNumber}`);
   }
 
   return (
@@ -120,7 +105,6 @@ const OtpPage = () => {
       >
         <InputOTPGroup
           className="flex items-center justify-between mt-[22px] w-full"
-          onChange={(value) => console.log(value)}
         >
           <InputOTPSlot
             index={4}
