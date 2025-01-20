@@ -1,12 +1,27 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Typography } from "../../components/atoms/typography";
 import { userContext } from "../../context/userContext";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Select } from "../../components/molecules/select";
 import { Input } from "../../components/atoms/input";
-import { useCities, useProvinces } from "../../hook/states";
 import { notification } from "antd";
 import { Button } from "../../components/atoms/button";
+import { useMutation, useQuery } from "react-query";
+import { checkAgencyCode } from "../../services/checkAgencyCode";
+import { InputIcon } from "../../components/molecules/input-icon";
+import { Loading } from "../../components/atoms/loading";
+import { CloseCircle, TickCircle } from "iconsax-react";
+import {
+  fetchCounties,
+  fetchProvinces,
+  FetchProvincesResponse,
+} from "../../services/fetchProvinces";
+import {
+  fetchInsuranceBranch,
+  FetchInsuranceBranchResponseModel,
+} from "../../services/insuranceBranch";
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 interface IFormInput {
   firstName: string;
@@ -14,23 +29,52 @@ interface IFormInput {
 }
 
 const InsurancePage = () => {
-  const { agentCode } = useContext(userContext);
+  const { agentCode, dispatch } = useContext(userContext);
 
-  const [provinceValue, setProvinceValue] = useState<{
+  const [selectedProvince, setselectedProvince] = useState<{
     name: string;
     id: number;
+  }>({ name: "", id: -1 });
+
+  const [selectedInsuranceBranch, setselectedInsuranceBranch] = useState<{
+    id: number;
+    name: string;
+    insurance: number;
+    province: number;
+    county: number;
   }>();
+
+  const [branchValue, setBranchValue] = useState("");
+
+  const { data: provincesData, isLoading: loadingProvinces } = useQuery(
+    ["provinces"],
+    fetchProvinces
+  );
+
+  const { data: citiesData, isLoading: loadingCities } = useQuery(
+    ["counties", selectedProvince],
+    () => fetchCounties(selectedProvince?.id),
+    {
+      enabled: !!selectedProvince.name,
+    }
+  );
+
+  const { data: insuranceBranchData, isLoading: loadingInsuranceBranchData } =
+    useQuery(
+      ["branches", selectedProvince],
+      () =>
+        fetchInsuranceBranch(Number(branchValue), "DEY", selectedProvince?.id),
+      {
+        enabled: !!selectedProvince.name && !!branchValue,
+      }
+    );
+
   const [cityValue, seCityValue] = useState<{
     name: string;
     id: number;
   }>();
   const [selectedValue, setSelectedValue] = useState<string>("");
-
-  const { data: provincesData, isLoading: loadingProvinces } = useProvinces();
-
-  const { data: citiesData, isLoading: loadingCities } = useCities(
-    String(provinceValue?.id)
-  );
+  // );
 
   const { handleSubmit } = useForm();
 
@@ -51,11 +95,71 @@ const InsurancePage = () => {
     setSelectedValue(value);
   };
 
+  const checkAgencyCodeMutation = useMutation(checkAgencyCode, {
+    onSuccess: (data) => {
+      // navigate("/otpPage");
+    },
+    onError: (error: {
+      code: string;
+      message: string;
+      response: { data: { error_details: { fa_details: string } } };
+    }) => {
+      notification.open({
+        type: "warning",
+        message: (
+          <Typography className="text-basicGray-400 font-medium text-xs m-0 pt-1">
+            {error.response.data.error_details.fa_details}
+          </Typography>
+        ),
+        className: "bg-error-100",
+      });
+    },
+  });
+
+  const checkAgencyCodeHandler = (agencyCode: string) => {
+    dispatch({ type: "SET-AGENT-CODE", payload: agencyCode });
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (agentCode) {
+        const requestData = {
+          agent_code: agentCode,
+        };
+
+        checkAgencyCodeMutation.mutate(requestData);
+      } else return;
+    }, 1000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [agentCode]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (agentCode) {
+        const requestData = {
+          agent_code: agentCode,
+        };
+
+        checkAgencyCodeMutation.mutate(requestData);
+      } else return;
+    }, 1000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [agentCode]);
+
+  const clearAgencycodeHandler = () => {
+    console.log("object");
+    dispatch({ type: "SET-AGENT-CODE", payload: "" });
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <label htmlFor="agentCode">
+          <label htmlFor="agencyCode">
             <Typography
               className="font-normal text-xs text-basicGray-400"
               type="h2"
@@ -64,13 +168,33 @@ const InsurancePage = () => {
             </Typography>
           </label>
           <div
-            id="agentCode"
-            className="flex items-center justify-between border p-3 border-basicGray-100 rounded-lg h-full"
+            id="agencyCode"
+            className="flex items-center justify-between border border-basicGray-100 rounded-lg h-full"
           >
-            <input
+            <InputIcon
               value={agentCode}
-              className="hover:border-none focus:border-none text-right placeholder:text-basicGray-100 placeholder:text-xs text-basicGray-400 w-full"
-              placeholder="نام نمایندگی را وارد کنید."
+              className="border-none text-left placeholder:text-right placeholder:!text-basicGray-100 placeholder:text-xs text-basicGray-400 w-full h-12"
+              placeholder="کد نمایندگی را وارد کنید."
+              onChangeText={(agencyCode) => checkAgencyCodeHandler(agencyCode)}
+              icon={
+                checkAgencyCodeMutation.isLoading ? (
+                  <Loading />
+                ) : checkAgencyCodeMutation.isSuccess ? (
+                  <TickCircle
+                    size={20}
+                    className="text-green-600"
+                    onClick={() => console.log("object")}
+                  />
+                ) : (
+                  checkAgencyCodeMutation.isError && (
+                    <CloseCircle
+                      size={20}
+                      className="text-rose-600"
+                      onClick={clearAgencycodeHandler}
+                    />
+                  )
+                )
+              }
             />
           </div>
         </div>
@@ -87,17 +211,17 @@ const InsurancePage = () => {
           <div id="lastName" className="w-full">
             <Select
               data={provincesData}
-              value={provinceValue?.name}
+              value={selectedProvince?.name}
               inputProps={{
                 className: "placeholder:!text-[#D2D1D1] placeholder:text-xs",
               }}
               placeholder={{ input: "استان را انتخاب کنید." }}
-              renders={(provinces: { name: string; id: number }) => (
+              renders={(provinces: FetchProvincesResponse) => (
                 <Typography className="text-basicGray-200">
                   {provinces.name}
                 </Typography>
               )}
-              onClickItem={(province) => setProvinceValue(province)}
+              onClickItem={(province) => setselectedProvince(province)}
               isLoading={loadingProvinces}
             />
           </div>
@@ -117,7 +241,9 @@ const InsurancePage = () => {
               data={citiesData}
               value={cityValue?.name}
               inputProps={{
-                className: "placeholder:!text-[#D2D1D1] placeholder:text-xs",
+                className: `placeholder:!text-[#D2D1D1] placeholder:text-xs ${
+                  selectedProvince.name ? "" : "bg-gray-200"
+                }`,
               }}
               placeholder={{ input: "شهر را انتخاب کنید." }}
               renders={(provinces: { name: string; id: number }) => (
@@ -127,6 +253,7 @@ const InsurancePage = () => {
               )}
               onClickItem={(city) => seCityValue(city)}
               isLoading={loadingCities}
+              readOnly={selectedProvince.name ? false : true}
             />
           </div>
         </div>
@@ -142,10 +269,32 @@ const InsurancePage = () => {
           </label>
           <div id="lastName" className="w-full">
             <Select
+              data={insuranceBranchData?.response}
+              value={branchValue}
               inputProps={{
-                className: "placeholder:!text-[#D2D1D1] placeholder:text-xs",
+                className: `placeholder:!text-[#D2D1D1] placeholder:text-xs ${
+                  selectedProvince.name ? "" : "bg-gray-200"
+                }`,
               }}
+              renders={(branche: {
+                id: number;
+                name: string;
+                insurance: number;
+                province: number;
+                county: number;
+              }) => (
+                <Typography className="text-basicGray-200">
+                  {branche?.name}
+                </Typography>
+              )}
+              onChangeText={(value) => setBranchValue(value)}
               placeholder={{ input: "شعبه بیمه گر را انتخاب کنید." }}
+              onClickItem={(branch) => {
+                setBranchValue(branch.name);
+                setselectedInsuranceBranch(branch);
+              }}
+              isLoading={loadingCities}
+              readOnly={selectedProvince.name ? false : true}
             />
           </div>
         </div>
@@ -178,6 +327,17 @@ const InsurancePage = () => {
           >
             نوع نمایندگی
           </Typography>
+          <RadioGroup defaultValue="option-one">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="option-one" id="option-one" />
+              <Label htmlFor="option-one">حقیقی</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="option-two" id="option-two" />
+              <Label htmlFor="option-two">حقوقی</Label>
+            </div>
+          </RadioGroup>
+
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="radio"

@@ -19,18 +19,17 @@ export const userContext = createContext<userState & Idispatch>({
   phoneNumber: "",
   firstName: "",
   lastName: "",
+  agentCode: "",
   dispatch: () => {},
 });
 
 function UserProvider({ children }: IProps) {
-  const [{ phoneNumber, firstName, lastName }, dispatch] = useReducer(
-    createUserReducer,
-    InitialUserState
-  );
+  const [{ phoneNumber, firstName, lastName, agentCode }, dispatch] =
+    useReducer(createUserReducer, InitialUserState);
 
   return (
     <userContext.Provider
-      value={{ phoneNumber, firstName, lastName, dispatch }}
+      value={{ phoneNumber, firstName, lastName, agentCode, dispatch }}
     >
       {children}
     </userContext.Provider>

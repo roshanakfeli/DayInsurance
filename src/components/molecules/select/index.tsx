@@ -40,6 +40,7 @@ interface IProps<T, S, G> {
   onFocus?: () => void;
   useForPackages?: boolean;
   isError?: boolean;
+  readOnly?: boolean;
 }
 
 export const Select = <T, S, G extends { items: any[]; key?: string }>(
@@ -64,6 +65,7 @@ export const Select = <T, S, G extends { items: any[]; key?: string }>(
     onFocus = () => {},
     useForPackages = false,
     isError,
+    readOnly,
   } = props;
 
   const [status, setStatus] = useState<"close" | "open" | "pin">("close");
@@ -131,6 +133,7 @@ export const Select = <T, S, G extends { items: any[]; key?: string }>(
           onClick={onClick}
           onFocus={onFocusHandle}
           isError={isError}
+          readOnly={readOnly}
         />
         <div className="absolute left-2 top-0 h-full flex items-center justify-center cursor-pointer ">
           {icons}
@@ -145,7 +148,7 @@ export const Select = <T, S, G extends { items: any[]; key?: string }>(
                   }
                   className="text-basicGray-100cb"
                   fill="grey"
-                  size={20}
+                  size={18}
                 ></ArrowDown2>
               )}
             </>
