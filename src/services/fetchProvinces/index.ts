@@ -23,12 +23,17 @@ export const fetchProvinces = async (): Promise<
       "https://stage.api.sanaap.co/base/provinces_wop/"
     );
     return response.data;
-  } catch (error) {
-    throw new Error(
-      `Error fetching provinces: ${
-        axios.isAxiosError(error) ? error.message : "Unknown error"
-      }`
-    );
+  } catch (error: {
+    response: {
+      data: {
+        status_code: number;
+        message: string;
+        error_details: { fa_details: string };
+        is_success: boolean;
+      };
+    };
+  }) {
+    throw error.response ? error.response.data : error;
   }
 };
 
@@ -43,11 +48,16 @@ export const fetchCounties = async (
       }
     );
     return response.data;
-  } catch (error) {
-    throw new Error(
-      `Error fetching counties: ${
-        axios.isAxiosError(error) ? error.message : "Unknown error"
-      }`
-    );
+  } catch (error: {
+    response: {
+      data: {
+        status_code: number;
+        message: string;
+        error_details: { fa_details: string };
+        is_success: boolean;
+      };
+    };
+  }) {
+    throw error.response ? error.response.data : error;
   }
 };

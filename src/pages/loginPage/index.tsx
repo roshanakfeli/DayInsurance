@@ -26,12 +26,17 @@ const LoginPage = () => {
     onSuccess: () => {
       navigate("/otpPage");
     },
-    onError: (error: { code: string; message: string }) => {
+    onError: (error: {
+      status_code: number;
+      message: string;
+      error_details: { fa_details: string };
+      is_success: boolean;
+    }) => {
       notification.open({
         type: "error",
         message: (
           <Typography className="text-basicGray-400 font-medium text-xs m-0 pt-1">
-            {error.message}
+            {error.error_details.fa_details || "Unknown error"}
           </Typography>
         ),
         className: "bg-error-100",
@@ -40,11 +45,13 @@ const LoginPage = () => {
   });
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    const requestData ={
-      phone_number:`0${data.phoneNumber}`
+    const requestData = {
+      phone_number: `0${data.phoneNumber}`,
+    };
+    if (!createOtpMutation.isLoading) {
+      createOtpMutation.mutate(requestData);
+      dispatch({ type: "SET-PHONE-NUMBER", payload: data.phoneNumber });
     }
-    createOtpMutation.mutate(requestData);
-    dispatch({ type: "SET-PHONE-NUMBER", payload: data.phoneNumber });
   };
 
   return (
@@ -114,7 +121,7 @@ const LoginPage = () => {
             type="submit"
             className={` rounded-lg w-full py-[10px] ${
               createOtpMutation.isLoading
-                ? "bg-gray-400 cursor-not-allowed"
+                ? "!bg-gray-400 cursor-not-allowed"
                 : "bg-primaries-100"
             } `}
           >

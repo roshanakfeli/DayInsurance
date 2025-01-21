@@ -7,23 +7,29 @@ import InsurancePage from "./pages/insurancePage";
 
 import "antd/dist/reset.css";
 import "./assets/css/index.css";
+import UserState from "./pages/userStatePage";
 
 function App() {
   return (
-    <>
-      <MainTemplate
-        children={
-          <>
-            <Routes>
-              <Route path="/" element={<LoginPage />} />
-              <Route path="/otpPage" element={<OtpPage />} />
-              <Route path="/userInfo" element={<UserInfo />} />
-              <Route path="/insurancePage" element={<InsurancePage />} />
-            </Routes>
-          </>
+    <Routes>
+      <Route path="/userState" element={<UserState />} />
+
+      <Route
+        path="/*"
+        element={
+          <MainTemplate
+            children={
+              <Routes>
+                <Route path="/" element={<LoginPage />} />
+                <Route path="/otpPage" element={<OtpPage />} />
+                <Route path="/userInfo" element={<UserInfo />} />
+                <Route path="/insurancePage" element={<InsurancePage />} />
+              </Routes>
+            }
+          />
         }
       />
-    </>
+    </Routes>
   );
 }
 

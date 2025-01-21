@@ -28,12 +28,17 @@ const OtpPage = () => {
     onSuccess: () => {
       navigate("/otpPage");
     },
-    onError: (error: { code: string; message: string }) => {
+    onError: (error: {
+      status_code: number;
+      message: string;
+      error_details: { fa_details: string };
+      is_success: boolean;
+    }) => {
       notification.open({
         type: "error",
         message: (
           <Typography className="text-basicGray-400 font-medium text-xs m-0 pt-1">
-            {error.message}
+            {error.error_details.fa_details}
           </Typography>
         ),
         className: "bg-error-100",
@@ -45,11 +50,16 @@ const OtpPage = () => {
     onSuccess: () => {
       navigate("/userInfo");
     },
-    onError: (error: { code: string; message: string }) => {
+    onError: (error: {
+      status_code: number;
+      message: string;
+      error_details: { fa_details: string };
+      is_success: boolean;
+    }) => {
       notification.open({
         message: (
           <Typography className="text-basicGray-400 font-medium text-xs rounded-2xl m-0 pt-1">
-            {error.message}
+            {error.error_details.fa_details}
           </Typography>
         ),
         type: "error",
@@ -67,15 +77,21 @@ const OtpPage = () => {
   const onValidateOtpHandler = () => {
     const requestData = {
       code: Number(otpValue),
-      phone_number:`0${phoneNumber}`
+      phone_number: `0${phoneNumber}`,
     };
 
-    validateOtpMutation.mutate(requestData);
+    if (!validateOtpMutation.isLoading) {
+      validateOtpMutation.mutate(requestData);
+    }
   };
 
   const onResendOtpHandler = () => {
-    createOtpMutation.mutate(`0${phoneNumber}`);
-  }
+    const requestData = {
+      phone_number: `0${phoneNumber}`,
+    };
+
+    createOtpMutation.mutate(requestData);
+  };
 
   return (
     <div>
@@ -103,9 +119,7 @@ const OtpPage = () => {
         className="flex justify-center"
         onChange={(value) => setOtpValue(value)}
       >
-        <InputOTPGroup
-          className="flex items-center justify-between mt-[22px] w-full"
-        >
+        <InputOTPGroup className="flex items-center justify-between mt-[22px] w-full">
           <InputOTPSlot
             index={4}
             className="border rounded-md border-basicGray-100 w-12 h-12"
@@ -129,19 +143,24 @@ const OtpPage = () => {
         </InputOTPGroup>
       </InputOTP>
       <div className="flex justify-center my-4">
-        <Timer totalSeconds={120} className="text-basicGray-200" onClick={onResendOtpHandler} />
+        <Timer
+          totalSeconds={120}
+          className="text-basicGray-200"
+          onClick={onResendOtpHandler}
+        />
       </div>
       <div>
         <Button
           className={` rounded-lg w-full py-[10px] ${
             validateOtpMutation.isLoading
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-primaries-100'
+              ? "!bg-gray-400 cursor-not-allowed"
+              : "bg-primaries-100"
           }`}
           onClick={onValidateOtpHandler}
+          disabled={validateOtpMutation.isLoading}
         >
           <Typography className="font-normal m-0" type="h2">
-          {validateOtpMutation.isLoading ? 'لطفا منتظر بمانید...' : 'ادامه'}
+            {validateOtpMutation.isLoading ? "لطفا منتظر بمانید..." : "ادامه"}
           </Typography>
         </Button>
       </div>

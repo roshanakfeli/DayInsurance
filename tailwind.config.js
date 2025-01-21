@@ -7,19 +7,20 @@ export default {
       colors: {
         primaries: {
           100: "#017785",
+          200: "#93C2C7",
         },
         basicGray: {
           100: "#D2D1D1",
           200: "#909090",
-          300:"#B8B8B8",
+          300: "#B8B8B8",
           400: "#505050",
         },
         error: {
           100: "#F8DEE1",
           500: "#E14856",
         },
-        warning:{
-          500:"#F86534"
+        warning: {
+          500: "#F86534",
         },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
