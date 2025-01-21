@@ -106,7 +106,7 @@ const InsurancePage = () => {
   const onSubmit: SubmitHandler<IFormInput> = () => {
     const requestData = {
       province: String(selectedProvince.id),
-      county: cityValue?.name ?? "",
+      county: String(cityValue?.id),
       agent_code: agentCode,
       phone_number: phoneNumber,
       insurance_branch: selectedInsuranceBranch?.name ?? "",
