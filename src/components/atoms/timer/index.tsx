@@ -35,6 +35,7 @@ export const Timer = ({
       <div className="flex items-center gap-5">
         {second === 0 ? (
           <Button
+            variant="none"
             className=" border-none text-basicGray-200 text-[10px] !p-0 !m-0"
             onClick={_onClick}
           >

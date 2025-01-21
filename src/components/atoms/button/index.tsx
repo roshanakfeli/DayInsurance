@@ -41,7 +41,7 @@ export const Button = (props: IButtonprops) => {
     case "none":
       break;
     default:
-      className += " bg-primaries-100 text-white border rounded-md";
+      className += " bg-primaries-100 text-white border rounded-md ";
       break;
   }
 
