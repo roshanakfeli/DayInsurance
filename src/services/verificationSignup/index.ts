@@ -7,11 +7,8 @@ export type VerificationSignupResponseModel = {
   is_success: boolean;
   error_details: null | string;
   response: {
-    id: number;
-    name: string;
-    insurance: number;
-    province: number;
-    county: number;
+    refresh: string;
+    access: number;
   }[];
 };
 
@@ -27,11 +24,11 @@ export const verificationSignup = async (data: {
   phone: string;
   phone_number: string;
   province: string;
-  name: string;
+  Name: string;
 }): Promise<VerificationSignupResponseModel> => {
   try {
     const response = await axios.post<VerificationSignupResponseModel>(
-      `https://stage.api.sanaap.co/api/v2/app/DEY/agent/verification/signup`,
+      `https://stage.api.sanaap.co/api/v2/app/DEY/agent/verification/signup/`,
       data
     );
     return response.data;

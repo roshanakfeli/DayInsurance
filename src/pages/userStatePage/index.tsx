@@ -2,8 +2,17 @@ import { Button } from "../../components/atoms/button";
 import StickyBottomModal from "../../components/atoms/sticky-modal/insex";
 import { Typography } from "../../components/atoms/typography";
 import logo from "../../assets/images/logo.svg";
+import { userStatus } from "../../services/userStatus";
+import { useQuery } from "react-query";
 
 const UserState = () => {
+  // const {
+  //   data,
+  //   isLoading: loadingProvinces,
+  //   isError: isErrorProvinces,
+  //   error: errorProvinces,
+  // } = useQuery(["provinces"], userStatus);
+
   return (
     <div className="bg-primaries-200 h-[100vh]">
       <div className="flex justify-center my-auto pt-8">

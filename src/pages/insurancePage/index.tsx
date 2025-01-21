@@ -37,6 +37,7 @@ const InsurancePage = () => {
   const navigate = useNavigate();
 
   const {
+    data,
     mutate: verificationSignupMutation,
     isLoading: isLoadingVerificationSignup,
     isError: isErrorVerificationSignup,
@@ -57,6 +58,7 @@ const InsurancePage = () => {
     county: number;
   }>();
 
+  console.log(data, "data");
   const [branchValue, setBranchValue] = useState<string>("");
   const [cityCode, setCityCode] = useState<string>("021");
   const [address, setAddress] = useState<string>("");
@@ -109,32 +111,31 @@ const InsurancePage = () => {
       county: String(cityValue?.id),
       agent_code: agentCode,
       phone_number: `0${phoneNumber}`,
-      insurance_branch: selectedInsuranceBranch?.name ?? "",
+      insurance_branch: String(selectedInsuranceBranch?.id),
       agency_type: typeOfRepresentation,
       phone,
       city_code: cityCode,
       first_name: firstName,
       last_name: lastName,
-      name: nameOfAgency,
+      Name: nameOfAgency,
       address,
     };
 
     if (!isLoadingVerificationSignup) {
       verificationSignupMutation(requestData);
     }
-    // if (isSuccessVerificationSignup) {
-    //   navigate("/userState");
-    // } else if (isErrorVerificationSignup) {
-    //   notification.open({
-    //     type: "error",
-    //     message: (
-    //       <Typography className="text-basicGray-400 font-medium text-xs m-0 pt-1">
-    //         {errorVerificationSignup?.error_details?.fa_details}
-    //       </Typography>
-    //     ),
-    //     className: "bg-error-100",
-    //   });
-    // }
+    navigate("/userState");
+    if (isErrorVerificationSignup) {
+      notification.open({
+        type: "error",
+        message: (
+          <Typography className="text-basicGray-400 font-medium text-xs m-0 pt-1">
+            {errorVerificationSignup?.error_details?.fa_details}
+          </Typography>
+        ),
+        className: "bg-error-100",
+      });
+    }
   };
 
   const checkAgencyCodeMutation = useMutation(checkAgencyCode, {
