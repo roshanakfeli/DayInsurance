@@ -108,7 +108,7 @@ const InsurancePage = () => {
       province: String(selectedProvince.id),
       county: String(cityValue?.id),
       agent_code: agentCode,
-      phone_number: phoneNumber,
+      phone_number: `0${phoneNumber}`,
       insurance_branch: selectedInsuranceBranch?.name ?? "",
       agency_type: typeOfRepresentation,
       phone,
@@ -122,19 +122,19 @@ const InsurancePage = () => {
     if (!isLoadingVerificationSignup) {
       verificationSignupMutation(requestData);
     }
-    if (isSuccessVerificationSignup) {
-      navigate("/userState");
-    } else if (isErrorVerificationSignup) {
-      notification.open({
-        type: "error",
-        message: (
-          <Typography className="text-basicGray-400 font-medium text-xs m-0 pt-1">
-            {errorVerificationSignup?.error_details?.fa_details}
-          </Typography>
-        ),
-        className: "bg-error-100",
-      });
-    }
+    // if (isSuccessVerificationSignup) {
+    //   navigate("/userState");
+    // } else if (isErrorVerificationSignup) {
+    //   notification.open({
+    //     type: "error",
+    //     message: (
+    //       <Typography className="text-basicGray-400 font-medium text-xs m-0 pt-1">
+    //         {errorVerificationSignup?.error_details?.fa_details}
+    //       </Typography>
+    //     ),
+    //     className: "bg-error-100",
+    //   });
+    // }
   };
 
   const checkAgencyCodeMutation = useMutation(checkAgencyCode, {
@@ -311,6 +311,7 @@ const InsurancePage = () => {
               placeholder="آدرس را وارد کنید."
               onChange={(e) => setAddress(e.target.value)}
               value={address}
+              className="placeholder:!text-[#D2D1D1] placeholder:text-xs"
             />
           </div>
         </div>
@@ -450,7 +451,7 @@ const InsurancePage = () => {
             disabled={isLoadingVerificationSignup}
           >
             <Typography className="font-normal m-0" type="h2">
-              ثبت نام
+              {isLoadingVerificationSignup ? "در حال ثبت نام..." : "ثبت نام"}
             </Typography>
           </Button>
         </div>
