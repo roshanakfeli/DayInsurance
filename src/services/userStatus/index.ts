@@ -1,9 +1,14 @@
 import axios from "axios";
 
-export const userStatus = async () => {
+export const userStatus = async (token: string) => {
   try {
     const response = await axios.get(
-      "https://stage.api.sanaap.co/api/v2/app/DEY/agent/app_user_status/"
+      "https://stage.api.sanaap.co/api/v2/app/DEY/agent/app_user_status/",
+      {
+        headers: {
+          jwt: token,
+        },
+      }
     );
     return response.data;
   } catch (error: {

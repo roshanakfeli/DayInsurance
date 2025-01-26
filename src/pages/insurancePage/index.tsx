@@ -58,7 +58,6 @@ const InsurancePage = () => {
     county: number;
   }>();
 
-  console.log(data, "data");
   const [branchValue, setBranchValue] = useState<string>("");
   const [cityCode, setCityCode] = useState<string>("021");
   const [address, setAddress] = useState<string>("");
@@ -124,7 +123,9 @@ const InsurancePage = () => {
     if (!isLoadingVerificationSignup) {
       verificationSignupMutation(requestData);
     }
-    navigate("/userState");
+
+    navigate(`/userState?token=${encodeURIComponent(data.response.access)}`);
+
     if (isErrorVerificationSignup) {
       notification.open({
         type: "error",

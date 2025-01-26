@@ -4,14 +4,23 @@ import { Typography } from "../../components/atoms/typography";
 import logo from "../../assets/images/logo.svg";
 import { userStatus } from "../../services/userStatus";
 import { useQuery } from "react-query";
+import { useLocation } from "react-router-dom";
 
 const UserState = () => {
-  // const {
-  //   data,
-  //   isLoading: loadingProvinces,
-  //   isError: isErrorProvinces,
-  //   error: errorProvinces,
-  // } = useQuery(["provinces"], userStatus);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get("token");
+
+  const {
+    data,
+    isLoading: loadingProvinces,
+    isError: isErrorProvinces,
+    error: errorProvinces,
+  } = useQuery(
+    ["userStatus"],
+    () => userStatus(token ?? ""), // Pass the token to the query function
+    { enabled: !!token }
+  );
 
   return (
     <div className="bg-primaries-200 h-[100vh]">

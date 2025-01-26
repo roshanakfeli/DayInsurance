@@ -9,7 +9,7 @@ export type VerificationSignupResponseModel = {
   response: {
     refresh: string;
     access: number;
-  }[];
+  };
 };
 
 export const verificationSignup = async (data: {
